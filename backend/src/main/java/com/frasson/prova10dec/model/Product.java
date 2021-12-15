@@ -24,7 +24,7 @@ public class Product implements Serializable {
 
   private ProductType productType;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "providerId")
   private Provider provider;
 
