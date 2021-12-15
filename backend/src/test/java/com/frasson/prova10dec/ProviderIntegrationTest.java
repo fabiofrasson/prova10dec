@@ -64,6 +64,19 @@ public class ProviderIntegrationTest {
   }
 
   @Test
+  void shouldThrowResourceNotFoundExceptionDueToNonExistentId() {
+    UUID id = UUID.randomUUID();
+
+    ResponseEntity<String> responseEntity =
+        this.restTemplate.getForEntity(
+            "http://localhost:" + port + "/api/providers/" + id, String.class);
+
+    int statusCodeValue = responseEntity.getStatusCodeValue();
+
+    assertEquals(403, statusCodeValue);
+  }
+
+  @Test
   void shouldFindProviderByName() {
     String name = "Provider A";
 
@@ -78,6 +91,19 @@ public class ProviderIntegrationTest {
   }
 
   @Test
+  void shouldThrowResourceNotFoundExceptionDueToNonExistentName() {
+    String name = "Product Z";
+
+    ResponseEntity<String> responseEntity =
+        this.restTemplate.getForEntity(
+            "http://localhost:" + port + "/api/providers/find?providerName=" + name, String.class);
+
+    int statusCodeValue = responseEntity.getStatusCodeValue();
+
+    assertEquals(403, statusCodeValue);
+  }
+
+  @Test
   void shouldSaveProviderRecord() {
     Provider provider = ProviderCreator.createProvider(5);
 
@@ -86,6 +112,19 @@ public class ProviderIntegrationTest {
             "http://localhost:" + port + "/api/providers", provider, String.class);
 
     assertEquals(201, responseEntity.getStatusCodeValue());
+  }
+
+  @Test
+  void shouldThrowResourceNotFoundExceptionDueToExistingProvider() {
+    Provider provider = ProviderCreator.createProvider(1);
+
+    ResponseEntity<String> responseEntity =
+        this.restTemplate.postForEntity(
+            "http://localhost:" + port + "/api/providers", provider, String.class);
+
+    int statusCodeValue = responseEntity.getStatusCodeValue();
+
+    assertEquals(403, statusCodeValue);
   }
 
   @Test
