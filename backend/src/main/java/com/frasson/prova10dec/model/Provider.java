@@ -26,6 +26,8 @@ public class Provider implements Serializable {
   @JsonIgnore
   private List<Product> products = new ArrayList<>();
 
+  public Provider() {}
+
   public Provider(UUID id, String providerName, ProductType market) {
     this.id = id;
     this.providerName = providerName;

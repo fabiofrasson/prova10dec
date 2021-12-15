@@ -15,9 +15,11 @@ import java.util.UUID;
 public class ProductService {
 
   private final ProductRepository repository;
+  private final ProviderService service;
 
-  public ProductService(ProductRepository repository) {
+  public ProductService(ProductRepository repository, ProviderService service) {
     this.repository = repository;
+    this.service = service;
   }
 
   public List<Product> listAll() {
@@ -65,7 +67,13 @@ public class ProductService {
     savedProduct.setId(id);
     savedProduct.setProductName(product.getProductName());
     savedProduct.setProductType(product.getProductType());
-    savedProduct.setProvider(product.getProvider());
+
+    if (service.findByProviderName(product.getProvider().getProviderName()) == null) {
+      service.save(product.getProvider());
+      savedProduct.setProvider(service.findByProviderName(product.getProductName()));
+    } else {
+      savedProduct.setProvider(service.findByProviderName(product.getProvider().getProviderName()));
+    }
     savedProduct.setPurchasePrice(product.getPurchasePrice());
     savedProduct.setRetailPrice(product.getRetailPrice());
 
