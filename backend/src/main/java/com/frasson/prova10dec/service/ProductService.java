@@ -4,7 +4,6 @@ import com.frasson.prova10dec.exception.ResourceAlreadyExistsException;
 import com.frasson.prova10dec.exception.ResourceNotFoundException;
 import com.frasson.prova10dec.model.Product;
 import com.frasson.prova10dec.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -13,10 +12,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class ProductService {
 
   private final ProductRepository repository;
+
+  public ProductService(ProductRepository repository) {
+    this.repository = repository;
+  }
 
   public List<Product> listAll() {
     return repository.findAll();
@@ -28,6 +30,16 @@ public class ProductService {
         .orElseThrow(() -> new ResourceNotFoundException("Product not found, please try again."));
   }
 
+  public Product findByProductName(String productName) {
+    Optional<Product> foundProduct = repository.findByProductNameIgnoreCase(productName);
+
+    if (foundProduct.isEmpty()) {
+      throw new ResourceNotFoundException("Product not found.");
+    }
+
+    return foundProduct.get();
+  }
+
   @Transactional
   public String save(Product product) {
     Optional<Product> findProduct =
@@ -37,6 +49,7 @@ public class ProductService {
       throw new ResourceAlreadyExistsException("Product is already registered.");
     }
 
+    product.setId(UUID.randomUUID());
     repository.save(product);
     return "Product " + product.getProductName() + " successfully registered!";
   }
@@ -59,5 +72,25 @@ public class ProductService {
     repository.save(savedProduct);
 
     return "Product successfully updated!";
+  }
+
+  public String raiseStockQty(UUID id, Integer qty) {
+    Product product = this.findByIdOrThrowError(id);
+
+    product.raiseStock(qty);
+
+    repository.save(product);
+
+    return product.getProductName() + " stock raised by " + qty + " unit(s).";
+  }
+
+  public String lowerStockQty(UUID id, Integer qty) throws Exception {
+    Product product = this.findByIdOrThrowError(id);
+
+    product.lowerStock(qty);
+
+    repository.save(product);
+
+    return product.getProductName() + " stock lowered by " + qty + " unit(s).";
   }
 }

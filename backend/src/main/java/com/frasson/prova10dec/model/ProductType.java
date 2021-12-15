@@ -5,4 +5,8 @@ public enum ProductType {
   TYPE_BEVERAGE,
   TYPE_SNACK,
   TYPE_DESSERT;
+
+  public String getStatus() {
+    return this.name();
+  }
 }

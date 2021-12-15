@@ -1,5 +1,6 @@
 package com.frasson.prova10dec.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -18,9 +19,38 @@ public class Provider implements Serializable {
   @Column(name = "id", updatable = false, nullable = false)
   private UUID id;
 
-  private String supplierName;
+  private String providerName;
   private ProductType market;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "provider")
+  @OneToMany(mappedBy = "provider")
+  @JsonIgnore
   private List<Product> products = new ArrayList<>();
+
+  public UUID getId() {
+    return id;
+  }
+
+  public void setId(UUID id) {
+    this.id = id;
+  }
+
+  public String getProviderName() {
+    return providerName;
+  }
+
+  public void setProviderName(String providerName) {
+    this.providerName = providerName;
+  }
+
+  public ProductType getMarket() {
+    return market;
+  }
+
+  public void setMarket(ProductType market) {
+    this.market = market;
+  }
+
+  public List<Product> getProducts() {
+    return products;
+  }
 }

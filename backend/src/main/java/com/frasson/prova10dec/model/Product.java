@@ -24,8 +24,8 @@ public class Product implements Serializable {
 
   private ProductType productType;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "supplierId")
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "providerId")
   private Provider provider;
 
   private Integer stockQty;
@@ -87,15 +87,14 @@ public class Product implements Serializable {
   }
 
   public void raiseStock(Integer quantity) {
-    this.stockQty += quantity;
+    this.stockQty = this.stockQty + quantity;
   }
 
   public void lowerStock(Integer quantity) throws Exception {
-    if (this.stockQty < 0 && this.stockQty >= quantity) {
-      this.stockQty -= quantity;
+    if (this.stockQty > 0 && this.stockQty >= quantity) {
+      this.stockQty = this.stockQty - quantity;
     } else {
-      throw new Exception(
-          "Your current stock quantity need to be higher than the quantity you are trying to lower.");
+      throw new Exception("Current stock quantity is not enough to perform operation.");
     }
   }
 }
